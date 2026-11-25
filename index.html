@@ -1,0 +1,1116 @@
+<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="robots" content="noindex, nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>CocoSystem利用ガイド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Roboto+Mono:wght@500&display=swap">
+<style>
+/* Layout: pink header/footer bands framing a quiet off-white reading area; three large entry cards on top, left index on detail pages */
+:root{
+  --pink:#EE869D;        /* header / footer band, same as admin header */
+  --pink-ink:#3A2A2F;    /* text on the pink band */
+  --accent:#C24D69;      /* links, markers */
+  --accent-soft:#FBE7EC;
+  --bg:#FAF8F9;
+  --surface:#FFFFFF;
+  --ink:#2A2326;
+  --muted:#6A6064;
+  --line:#ECE4E7;
+  --font-body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --font-num:"Roboto Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --accent:#F29AAE;--accent-soft:#3A2329;--bg:#171315;--surface:#211B1E;--ink:#F1EAED;--muted:#B3A6AB;--line:#342B2F;color-scheme:dark}}
+:root[data-theme="dark"]{--accent:#F29AAE;--accent-soft:#3A2329;--bg:#171315;--surface:#211B1E;--ink:#F1EAED;--muted:#B3A6AB;--line:#342B2F;color-scheme:dark}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:16px;line-height:1.85;-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.wrap{max-width:1080px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+
+/* header */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--pink)}
+.site-head{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--pink);color:var(--pink-ink)}
+.site-head .wrap{display:flex;align-items:center;gap:24px;padding-block:10px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--pink-ink)}
+.brand img{height:44px;width:auto}
+.brand span{font-weight:700;font-size:16px;letter-spacing:.06em}
+.gnav{display:flex;gap:4px;margin-left:auto;flex-wrap:wrap}
+.gnav a{color:var(--pink-ink);text-decoration:none;font-size:15px;font-weight:700;padding:6px 14px;border-radius:999px}
+.gnav a:hover,.gnav a[aria-current="page"]{background:rgba(255,255,255,.5)}
+
+/* type */
+h1,h2,h3{text-wrap:balance;line-height:1.45;margin:0;font-weight:700}
+h1{font-size:clamp(26px,3.6vw,34px);letter-spacing:.03em}
+h2{font-size:22px;letter-spacing:.03em}
+h3{font-size:17px}
+p{margin:0}
+.lead{color:var(--muted);font-size:16px;max-width:40em}
+
+/* top */
+.hero{padding-block:52px 28px;display:grid;gap:12px}
+.entries{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;padding-bottom:40px}
+.entry{display:grid;grid-template-rows:auto auto 1fr;gap:14px;padding:26px 24px 18px;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.entry-head{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--ink)}
+.entry-head:hover h2{color:var(--accent)}
+.ico{flex:none;width:52px;height:52px;border-radius:50%;background:var(--accent-soft);display:grid;place-items:center;color:var(--accent)}
+.ico svg{width:26px;height:26px}
+.entry > p{font-size:14px;color:var(--muted);line-height:1.7}
+.links{list-style:none;margin:0;padding:0;align-self:start}
+.links li + li{border-top:1px solid var(--line)}
+.links a,.links span{display:flex;justify-content:space-between;gap:8px;padding-block:11px;font-size:15px;text-decoration:none;color:var(--ink)}
+.links a::after{content:"›";color:var(--accent);font-weight:700}
+.links a:hover{color:var(--accent)}
+.links span{color:var(--muted)}
+.links span::after{content:"準備中";font-size:12px}
+.links .group{padding-top:12px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em;border-top:none}
+
+.help{display:flex;flex-wrap:wrap;align-items:center;gap:8px 24px;padding:20px 24px;margin-bottom:64px;border-radius:12px;background:var(--accent-soft)}
+.help h3{font-size:16px}
+.help p{font-size:14px;color:var(--muted)}
+
+/* screenshot figure with markers */
+.shot{position:relative;margin:0;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:var(--surface);box-shadow:0 10px 30px -18px rgba(80,30,45,.35)}
+.shot img{display:block;width:100%;height:auto}
+.pin{position:absolute;transform:translate(-50%,-50%);width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:500 14px/28px var(--font-num);text-align:center;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.25);cursor:pointer;padding:0;transition:transform .15s}
+.pin:hover,.pin.on{transform:translate(-50%,-50%) scale(1.25)}
+.num{flex:none;width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font:500 14px/28px var(--font-num);text-align:center}
+
+/* detail pages */
+.crumb{font-size:13px;color:var(--muted);padding-top:24px}
+.crumb a{color:var(--muted)}
+.doc{display:grid;grid-template-columns:200px minmax(0,1fr);gap:40px;padding-block:24px 64px}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);align-self:start;display:grid;gap:2px;font-size:14px}
+.side p{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.side a,.side span{padding:6px 10px;border-radius:6px;text-decoration:none;color:var(--ink)}
+.side span{color:var(--muted)}
+.side a[aria-current="page"]{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.body{display:grid;gap:28px;min-width:0}
+.body > header{display:grid;gap:12px}
+.note{padding:14px 18px;border-radius:8px;background:var(--accent-soft);font-size:14px;line-height:1.75}
+.note b{color:var(--accent)}
+
+.items{list-style:none;margin:0;padding:0;display:grid;border-top:1px solid var(--line)}
+.items li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:4px 16px;padding:18px 8px;border-bottom:1px solid var(--line);scroll-margin-top:96px;transition:background .2s}
+.items li.on{background:var(--accent-soft)}
+.items h3{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.items h3 small{font-weight:400;font-size:12px;color:var(--muted)}
+.items .what{grid-column:2;font-size:15px}
+.items .tip{grid-column:2;font-size:13px;color:var(--muted)}
+
+.menu-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:0 32px}
+.menu-list a,.menu-list div{display:grid;grid-template-columns:1fr auto;gap:2px 12px;padding-block:14px;border-bottom:1px solid var(--line);text-decoration:none;color:var(--ink)}
+.menu-list strong{font-weight:700}
+.menu-list em{grid-column:1/-1;font-style:normal;font-size:13px;color:var(--muted);line-height:1.6}
+.menu-list .st{font-size:12px;color:var(--muted)}
+.menu-list a .st{color:var(--accent);font-weight:700}
+
+/* setup flow */
+.flow{list-style:none;margin:0;padding:0;display:grid}
+.flow li{display:grid;grid-template-columns:36px minmax(0,1fr);gap:4px 16px;position:relative;padding-bottom:22px}
+.flow li::before{content:"";position:absolute;left:17px;top:36px;bottom:0;width:2px;background:var(--line)}
+.flow li:last-child::before{display:none}
+.flow li.goal{padding-bottom:0}
+.flow li.goal .num{background:#2E9E5B;color:#fff}
+.flow li.goal h3{font-size:19px;color:#2E9E5B}
+.flow .num{width:36px;height:36px;font-size:15px;line-height:36px}
+.flow .t{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding-top:4px}
+.flow .t h3{font-size:17px}
+.flow .d{grid-column:2;font-size:15px;color:var(--muted)}
+.flow .d a{font-weight:700}
+.role{font-size:12px;font-weight:700;padding:2px 10px;border-radius:999px;white-space:nowrap}
+.role.you{background:var(--accent);color:#fff}
+.role.us{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.role.tbd{background:transparent;color:var(--muted);border:1px dashed var(--muted)}
+.box{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:18px 20px;display:grid;gap:8px}
+.box h3{font-size:16px}
+.box ul{margin:0;padding-left:1.2em;font-size:15px}
+
+/* step-by-step with screenshots */
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:36px}
+.steps li{display:grid;grid-template-columns:36px minmax(0,1fr);gap:10px 16px}
+.steps .num{width:36px;height:36px;font-size:15px;line-height:36px}
+.steps h3{padding-top:4px;font-size:18px}
+.steps .d,.steps .shot,.steps .sub,.steps .keys{grid-column:2}
+.steps .d{font-size:15px}
+.steps .sub{font-size:13px;color:var(--muted)}
+.code{display:inline-flex;align-items:center;gap:10px;margin-top:6px;padding:8px 8px 8px 16px;border-radius:8px;background:var(--surface);border:2px solid var(--accent)}
+.code b{font:500 22px/1 var(--font-num);letter-spacing:.08em;color:var(--ink)}
+.code.mail b{font-size:17px;letter-spacing:.02em}
+.code b{word-break:break-all}
+.shot-inner{position:relative}
+.scroll-hint{display:none;font-size:12px;color:var(--muted);margin-top:-18px}
+.code button{font:700 13px var(--font-body);color:#fff;background:var(--accent);border:0;border-radius:6px;padding:7px 12px;cursor:pointer}
+.warn{padding:12px 16px;border-radius:8px;border:1px solid var(--accent);font-size:14px;line-height:1.7}
+.warn b{color:var(--accent)}
+.sec-h{display:grid;gap:8px;padding-top:28px;border-top:1px solid var(--line);scroll-margin-top:96px}
+.check{list-style:none;padding:0!important;display:grid;gap:12px}
+.check li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:2px 10px}
+.check li::before{content:"";grid-row:1/3;width:18px;height:18px;margin-top:5px;border:2px solid var(--accent);border-radius:4px}
+.check b{font-size:15px}
+.check span{font-size:14px;color:var(--muted);line-height:1.7}
+.keys{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:14px;line-height:1.7}
+.keys li{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px}
+.keys .key,.pin.lbl{font-family:var(--font-num)}
+.keys .key{width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;line-height:26px;text-align:center}
+.em{color:var(--accent)}
+.journey{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;border:1px solid var(--line);border-radius:12px;background:var(--surface);overflow:hidden}
+.stage{position:relative;display:grid;gap:4px;align-content:start;padding:18px 18px 18px 22px;border-right:1px solid var(--line)}
+.stage:last-of-type{border-right:0}
+.stage b{font-size:16px}
+.stage span:not(.st-n){font-size:13px;color:var(--muted);line-height:1.6}
+.st-n{font:500 12px var(--font-num);color:var(--muted)}
+.stage.hi{background:var(--accent-soft)}
+.stage.hi b{color:var(--accent)}
+.stage:not(:last-of-type)::after{content:"";position:absolute;right:-7px;top:50%;width:12px;height:12px;background:inherit;border-top:1px solid var(--line);border-right:1px solid var(--line);transform:translateY(-50%) rotate(45deg);z-index:1}
+.j-cap{grid-column:1/-1;display:grid;grid-template-columns:2fr 2fr;font-size:12px;font-weight:700;border-top:1px solid var(--line)}
+.j-cap span{padding:8px 18px}
+.j-gen{color:var(--muted)}
+.j-ours{color:#fff;background:var(--accent);text-align:center}
+.tbl-h{font-size:17px;margin-bottom:-14px}
+.three{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.three li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:2px 10px;padding:14px 16px;border-radius:10px;background:var(--surface);border:1px solid var(--line)}
+.three b{font-size:15px;line-height:1.5}
+.three span:not(.num){grid-column:2;font-size:13px;color:var(--muted);line-height:1.6}
+.collect{display:grid;grid-template-columns:1.25fr 1fr;gap:28px;align-items:start}
+.col{display:grid;gap:14px;min-width:0}
+.col-h{font-size:14px;font-weight:700;color:var(--accent)}
+.sub{font-size:13px;color:var(--muted);line-height:1.7}
+.filter{display:grid;gap:12px;padding:22px;border-radius:12px;border:1px solid var(--accent);background:var(--accent-soft)}
+.filter h3{font-size:17px;color:var(--accent)}
+.filter > p:not(.warn):not(.sub){font-size:15px}
+.filter-ex{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.fx{display:grid;gap:2px;padding:12px 16px;border-radius:8px;background:var(--surface);border:1px solid var(--line)}
+.fx b{font-size:15px}
+.fx span{font-size:13px;color:var(--muted)}
+.fx.ok b{color:var(--accent)}
+.filter .warn{background:var(--surface)}
+.jump{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.jump a{display:grid;gap:4px;padding:18px 20px;border-radius:12px;border:1px solid var(--line);background:var(--surface);text-decoration:none;color:var(--ink)}
+.jump a:hover{border-color:var(--accent)}
+.jump b{font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.jump span:not(.badge){font-size:13px;color:var(--muted)}
+.jump a.ad{background:var(--accent-soft);border-color:var(--accent)}
+.jump a.ad b{color:var(--accent)}
+.badge{font-size:11px;font-weight:700;color:#fff;background:var(--accent);padding:2px 9px;border-radius:999px;letter-spacing:.04em}
+.ad-block{display:grid;gap:24px;margin-top:12px;padding:28px;border-radius:16px;border:2px solid var(--accent);background:var(--surface);scroll-margin-top:96px}
+.ad-head{display:flex;align-items:center;gap:12px}
+.ad-head h2{font-size:26px;color:var(--accent)}
+.ad-head .badge{font-size:13px;padding:3px 12px}
+.ad-block .tbl-h{margin-bottom:-10px}
+.items.compact{grid-template-columns:1fr 1fr;column-gap:28px}
+.items.compact li{padding:10px 4px;gap:0 12px;grid-template-columns:28px minmax(0,1fr)}
+.items.compact h3{font-size:15px}
+.items.compact .what{font-size:13px;color:var(--muted);line-height:1.6}
+.compare{display:grid;grid-template-columns:1fr 1.6fr;gap:12px}
+.cmp{display:grid;gap:4px;padding:16px 20px;border-radius:10px;border:1px solid var(--line);background:var(--surface)}
+.cmp-h{font-size:13px;font-weight:700;color:var(--muted)}
+.cmp-b{font-size:16px;font-weight:700}
+.cmp.ours{background:var(--accent-soft);border-color:var(--accent)}
+.cmp.ours .cmp-h,.cmp.ours b{color:var(--accent)}
+.keys-row{display:flex!important;flex-wrap:wrap;gap:8px 24px!important;margin-top:-12px!important}
+.keys-row li{display:flex!important;align-items:center;gap:8px}
+.keys-row .key{width:22px!important;height:22px!important;line-height:22px!important;font-size:12px!important}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.tbl table{width:100%;border-collapse:collapse;font-size:14px;line-height:1.65}
+.tbl th{text-align:left;font-weight:700;font-size:13px;color:var(--muted);background:var(--accent-soft);padding:10px 14px;white-space:nowrap}
+.tbl td{padding:12px 14px;border-top:1px solid var(--line);vertical-align:top}
+.tbl td:first-child{white-space:nowrap;font-weight:700}
+.tbl .ic{font-family:var(--font-num);text-align:center;color:var(--accent)}
+.st-b{display:inline-block;padding:2px 10px;border-radius:4px;font-size:12px;background:var(--line);color:var(--ink)}
+.st-b.warn-b{background:#F0913A;color:#fff}
+.feat{list-style:none;margin:0;padding:0;display:grid;gap:0;border-top:1px solid var(--line)}
+.feat li{display:grid;gap:2px;padding-block:14px;border-bottom:1px solid var(--line)}
+.feat b{font-size:15px}
+.feat span{font-size:14px;color:var(--muted);line-height:1.75}
+.split{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:28px;align-items:start}
+.split-text{display:grid;gap:16px}
+.head-shot .pin{width:24px;height:24px;font-size:12px;line-height:24px}
+.menu-map{display:grid;grid-template-columns:220px minmax(0,1fr);gap:32px;align-items:start}
+.side-shot{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px)}
+.side-shot .pin{width:22px;height:22px;font-size:11px;line-height:22px;border-width:1.5px}
+.menu-desc{list-style:none;margin:0;padding:0;display:grid}
+.menu-desc li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:14px;padding-block:14px;border-bottom:1px solid var(--line)}
+.menu-desc li:first-child{padding-top:0}
+.menu-desc p{font-size:14px;color:var(--muted);line-height:1.75;margin-top:2px}
+.menu-desc .more{display:inline-block;margin-top:6px;font-size:14px;font-weight:700;text-decoration:none}
+.prep{list-style:none;padding:0!important;display:grid;gap:10px}
+.prep li{display:flex;align-items:baseline;gap:10px}
+.prep .role{flex:none}
+.steps li:has(> h3:last-child){align-items:center}
+
+.foot{background:var(--pink);color:var(--pink-ink)}
+.foot .wrap{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:center;padding-block:28px calc(28px + env(safe-area-inset-bottom,0px))}
+.foot img{height:36px;width:auto}
+.foot nav{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:14px;font-weight:500}
+.foot nav a{color:var(--pink-ink);text-decoration:none}
+.foot small{margin-left:auto;font-size:12px;opacity:.8}
+
+@media (max-width:860px){
+  .entries{grid-template-columns:1fr}
+  .doc{display:flex;flex-direction:column;gap:32px}
+  .side{order:2;position:static;display:grid;gap:0;padding-top:20px;border-top:1px solid var(--line)}
+  .side a,.side span{padding:12px 4px;border-bottom:1px solid var(--line);border-radius:0}
+  .side a[aria-current="page"]{background:transparent}
+  .steps{gap:32px}
+  .steps li{grid-template-columns:32px minmax(0,1fr);gap:10px 12px}
+  .steps .num,.flow .num{width:32px;height:32px;line-height:32px}
+  .steps h3{padding-top:2px;font-size:17px}
+  .steps .d,.steps .sub,.steps .shot,.steps .keys{grid-column:1/-1}
+  .flow li{grid-template-columns:32px minmax(0,1fr);gap:4px 12px}
+  .flow li::before{left:15px;top:32px}
+  .code{padding:6px 6px 6px 12px}
+  .code b{font-size:18px}
+  .pinned{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .pinned .shot-inner{min-width:720px}
+  .pinned .pin{width:26px;height:26px;font-size:13px;line-height:26px}
+  .scroll-hint{display:block}
+  .head-shot .shot-inner{min-width:560px}
+  .menu-map{grid-template-columns:1fr;gap:20px}
+  .split{grid-template-columns:1fr}
+  .journey{grid-template-columns:1fr}
+  .stage{border-right:0;border-bottom:1px solid var(--line)}
+  .stage:not(:last-of-type)::after{right:auto;left:28px;top:auto;bottom:-7px;transform:rotate(135deg)}
+  .j-cap{grid-template-columns:1fr}
+  .compare{grid-template-columns:1fr}
+  .jump{grid-template-columns:1fr}
+  .filter-ex{grid-template-columns:1fr}
+  .three,.collect{grid-template-columns:1fr}
+  .collect .shot{max-width:360px;width:100%;margin:0 auto!important}
+  .filter{padding:16px}
+  .items.compact{grid-template-columns:1fr}
+  .ad-block{padding:20px 16px}
+  .split .shot{max-width:320px;margin:0 auto!important}
+  .tbl td:first-child{white-space:normal}
+  .side-shot{position:static;width:200px;margin:0 auto!important}
+  .items li{grid-template-columns:28px minmax(0,1fr);padding:16px 4px}
+  h1{font-size:24px}
+  .gnav{margin-left:0;width:100%}
+  .brand img{height:36px}
+  .pin{width:22px;height:22px;font-size:12px;line-height:22px}
+  .foot small{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="site-head">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="img/logo.png" alt="CocoSystem"><span>利用ガイド</span></a>
+    <nav class="gnav" aria-label="メインメニュー">
+      <a href="#setup" data-nav="setup">初期設定</a>
+      <a href="#admin" data-nav="admin">管理画面</a>
+      <a href="#top" data-nav="faq">よくある質問</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<!-- ============ TOP ============ -->
+<section id="view-top" class="wrap">
+  <div class="hero">
+    <h1>CocoSystem利用ガイド</h1>
+    <p class="lead">Instagram・Googleビジネスプロフィールを、ひとつの管理画面で運用するための手引きです。</p>
+  </div>
+
+  <div class="entries">
+    <div class="entry">
+      <a class="entry-head" href="#setup">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></span>
+        <h2>初期設定</h2>
+      </a>
+      <p>お申し込みから、ご利用開始までの流れです。</p>
+      <ul class="links">
+        <li><a href="#setup">ご利用開始までの流れ</a></li>
+        <li><a href="#setup-gbp">Googleのオーナー権限を付与する</a></li>
+        <li><a href="#setup-sns">Instagram・TikTokを連携する</a></li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <a class="entry-head" href="#admin">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 21h8M12 18v3"/></svg></span>
+        <h2>管理画面</h2>
+      </a>
+      <p>各ページで確認できることと、数字の意味です。</p>
+      <ul class="links">
+        <li><a href="#admin">画面の構成</a></li>
+        <li><a href="#dashboard">ダッシュボード</a></li>
+        <li><a href="#admin-posts">投稿</a></li>
+        <li><a href="#admin-reviews">口コミ・投稿</a></li>
+        <li><a href="#admin">すべてのメニューを見る</a></li>
+      </ul>
+    </div>
+
+    <div class="entry">
+      <a class="entry-head" href="#top">
+        <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6v.6"/><path d="M12 17h.01"/></svg></span>
+        <h2>よくある質問</h2>
+      </a>
+      <p>困ったときの確認ポイントと、契約のお手続きです。</p>
+      <ul class="links">
+        <li><span>数字が下がったときは</span></li>
+        <li><span>「連携エラー」と表示された</span></li>
+        <li class="group">契約・お手続き</li>
+        <li><span>プランを変更したい</span></li>
+        <li><span>解約したい</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="help">
+    <h3>ご不明な点があるときは</h3>
+    <p>担当者様にご確認ください。</p>
+  </div>
+</section>
+
+<!-- ============ SETUP FLOW ============ -->
+<section id="view-setup" class="wrap" hidden>
+  <p class="crumb"><a href="#top">利用ガイド</a> ／ 初期設定</p>
+  <div class="doc">
+    <nav class="side" aria-label="初期設定">
+      <p>初期設定</p>
+      <a href="#setup" aria-current="page">ご利用開始までの流れ</a>
+      <a href="#setup-gbp">Googleのオーナー権限を付与する</a>
+      <a href="#setup-sns">Instagram・TikTokを連携する</a>
+    </nav>
+    <article class="body">
+      <header>
+        <h1>ご利用開始までの流れ</h1>
+        <p class="lead">お申し込み後、弊社で管理画面をご用意します。そのあと、お客様と弊社で各サービスの連携を進めます。</p>
+      </header>
+
+      <ol class="flow">
+        <li><span class="num">1</span><div class="t"><h3>申し込みフォームを送信</h3><span class="role you">お客様</span></div>
+          <p class="d">必要事項を入力して送信してください。<br><a href="https://docs.google.com/forms/d/e/1FAIpQLSflTrXmcYSkvB6kudUD5txU1ZTOoKW4Gz_bKQ0Rr6BKwKndSw/viewform" target="_blank" rel="noopener">申し込みフォームを開く ›</a></p></li>
+        <li><span class="num">2</span><div class="t"><h3>管理画面の作成・ログイン情報のご案内</h3><span class="role us">弊社</span></div>
+          <p class="d">お申し込み内容を確認し、管理画面を作成してログイン情報をお送りします。</p></li>
+        <li><span class="num">3</span><div class="t"><h3>Googleのオーナー権限を付与</h3><span class="role you">お客様</span></div>
+          <p class="d">Googleビジネスプロフィールに、弊社をオーナーとして招待してください。招待すると、弊社が自動でオーナーとして追加されます。<br><a href="#setup-gbp">手順を見る ›</a></p></li>
+        <li><span class="num">4</span><div class="t"><h3>Google連携</h3><span class="role us">弊社</span></div>
+          <p class="d">管理画面の「ロケーション設定」から、弊社がGoogle連携を行います。<b>弊社のGoogleアカウントで連携する必要があるため、お客様は「Google連携」のボタンを押さないでください。</b></p></li>
+        <li><span class="num">5</span><div class="t"><h3>Instagram連携</h3><span class="role you">お客様または担当者様</span></div>
+          <p class="d">事前に、Instagramがプロアカウントになっているかをご確認ください。そのうえで管理画面からログインします。Instagramのログイン情報をご存じの方であれば、どなたが行っても大丈夫です。<br><a href="#setup-sns">手順を見る ›</a></p></li>
+        <li><span class="num">6</span><div class="t"><h3>Facebook連携</h3><span class="role you">お客様または担当者様</span><span class="role tbd">任意・おすすめ</span></div>
+          <p class="d">Facebookと連携しなくても導入はできますが、連携するといいね・保存・閲覧数などの数値が見られるようになります。InstagramアプリからFacebookページと連携してください。<b>事前にInstagramとFacebookページを連携済みの場合は不要です。</b><br><a href="#setup-sns-facebook">手順を見る ›</a></p></li>
+        <li><span class="num">7</span><div class="t"><h3>TikTok連携</h3><span class="role you">お客様または担当者様</span><span class="role tbd">任意・おすすめ</span></div>
+          <p class="d">連携しておくと、Instagramの動画投稿がTikTokにも自動で投稿されます。より多くの媒体に発信できるので、ぜひ連携してください。<br><a href="#setup-sns-tiktok">手順を見る ›</a></p></li>
+        <li><span class="num">8</span><div class="t"><h3>Synup連携</h3><span class="role us">自動</span></div>
+          <p class="d">導入後、自動で連携されます。お客様の操作は必要ありません。</p></li>
+        <li class="goal"><span class="num">✓</span><div class="t"><h3>導入スタート</h3></div>
+          <p class="d">以上で準備は完了です。以降は管理画面での操作を開始いただけます。</p></li>
+      </ol>
+
+      <div class="box">
+        <h3>あらかじめご用意いただくもの</h3>
+        <ul class="prep">
+          <li><span class="role you">必須</span>Googleビジネスプロフィールのオーナー権限を持つGoogleアカウント</li>
+          <li><span class="role you">必須</span>Instagramプロアカウントとログイン情報（ID・パスワード）</li>
+          <li><span class="role tbd">任意</span>Facebookページ（Instagramと連携する場合）</li>
+          <li><span class="role tbd">任意</span>TikTokのログイン情報（連携する場合）</li>
+        </ul>
+      </div>
+
+      <div class="box">
+        <h3>導入後にしていただきたいこと</h3>
+        <ul>
+          <li>Instagramの投稿（最低週2回程度）</li>
+          <li>Google口コミの収集と返信（返信は48時間以内推奨）</li>
+        </ul>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ SETUP: GBP OWNER ============ -->
+<section id="view-setup-gbp" class="wrap" hidden>
+  <p class="crumb"><a href="#top">利用ガイド</a> ／ <a href="#setup">初期設定</a> ／ Googleのオーナー権限を付与する</p>
+  <div class="doc">
+    <nav class="side" aria-label="初期設定">
+      <p>初期設定</p>
+      <a href="#setup">ご利用開始までの流れ</a>
+      <a href="#setup-gbp" aria-current="page">Googleのオーナー権限を付与する</a>
+      <a href="#setup-sns">Instagram・TikTokを連携する</a>
+    </nav>
+    <article class="body">
+      <header>
+        <h1>Googleのオーナー権限を付与する</h1>
+        <p class="lead">Googleビジネスプロフィールに、弊社をオーナーとして招待していただく手順です。</p>
+      </header>
+
+      <p class="note"><b>ご安心ください。</b>弊社に権限を付与しても、メインのオーナーが切り替わったり、これまでの操作や権限が変わったりすることはありません。メインのオーナーは、引き続きお客様のアカウントです。</p>
+
+      <p class="warn"><b>はじめに：</b>店舗のオーナー権限を持つGoogleアカウントでログインしてください。どのアカウントか分からない場合は、<a href="#setup-gbp-unknown">こちら</a>をご覧ください。</p>
+
+      <ol class="steps">
+        <li><span class="num">1</span><h3>「ビジネス」を開く</h3>
+          <p class="d">Googleの画面右上の「︙︙︙」（Googleアプリ）を押し、「ビジネス」を選びます。</p>
+          <figure class="shot"><img src="img/setup/gbp-01.webp" alt="Googleアプリの一覧から「ビジネス」を選ぶ画面" width="1200" height="617" loading="lazy"></figure></li>
+        <li><span class="num">2</span><h3>お店を選ぶ</h3>
+          <p class="d">一覧から対象のお店を選ぶと、Googleの店舗ページが開きます。</p>
+          <figure class="shot"><img src="img/setup/gbp-02.webp" alt="お店やサービスの一覧で対象のお店を選ぶ画面" width="1200" height="647" loading="lazy"></figure></li>
+        <li><span class="num">3</span><h3>「ビジネス プロフィールの設定」を開く</h3>
+          <p class="d">「プロファイルの強度」の横にある「︙」を押し、「ビジネス プロフィールの設定」を選びます。</p>
+          <p class="sub">オーナー権限のあるアカウントでログインしていれば、Googleで店名を検索しても同じ画面が出ます。手順1・2は飛ばして構いません。</p>
+          <figure class="shot"><img src="img/setup/gbp-03.webp" alt="プロファイルの強度の横のメニューからビジネスプロフィールの設定を選ぶ画面" width="1200" height="643" loading="lazy"></figure></li>
+        <li><span class="num">4</span><h3>「ユーザーとアクセス権」を開く</h3>
+          <figure class="shot"><img src="img/setup/gbp-04.webp" alt="ビジネスプロフィールの設定でユーザーとアクセス権を選ぶ画面" width="1200" height="643" loading="lazy"></figure></li>
+        <li><span class="num">5</span><h3>「追加」を押す</h3>
+          <figure class="shot"><img src="img/setup/gbp-05.webp" alt="ユーザーとアクセス権の画面で追加を押す" width="1200" height="643" loading="lazy"></figure></li>
+        <li><span class="num">6</span><h3>弊社のコードを入力して招待する</h3>
+          <p class="d">メールアドレスの欄に、次のコードを入力します。アクセスは<b>「オーナー」</b>を選び、「招待する」を押してください。</p>
+          <div class="d"><span class="code"><b id="gbp-code">5158331729</b><button type="button" class="copy" data-target="gbp-code">コピー</button></span></div>
+          <p class="sub">コードで追加できない場合は、代わりに次のメールアドレスを入力してください。</p>
+          <div class="d"><span class="code mail"><b id="gbp-mail">info@coco-system.com</b><button type="button" class="copy" data-target="gbp-mail">コピー</button></span></div>
+          <p class="warn d"><b>「管理者」ではなく、必ず「オーナー」を選んでください。</b>招待すると、弊社に招待メールが届きます。</p>
+          <figure class="shot"><img src="img/setup/gbp-06.webp" alt="ユーザーを追加する画面でコードを入力しオーナーを選んで招待する" width="1200" height="643" loading="lazy"></figure></li>
+      </ol>
+
+      <p class="note"><b>以上で完了です。</b>招待すると、弊社が自動でオーナーとして追加されます。このあと、弊社のアカウントでGoogle連携を行います。ご不明な点は、担当者様にご確認ください。</p>
+
+      <div class="sec-h" id="setup-gbp-unknown-anchor">
+        <h2>オーナーのGoogleアカウントが分からない場合</h2>
+        <p class="lead">Googleで店名を検索して、どのアカウントが管理しているかを確認します。</p>
+      </div>
+      <ol class="steps">
+        <li><span class="num">1</span><h3>「このビジネスのオーナーですか？」を押す</h3>
+          <p class="d">Googleで会社名や店名を検索し、右側に出るお店の情報の中から押します。</p>
+          <figure class="shot"><img src="img/setup/gbp-10.webp" alt="検索結果のお店の情報で「このビジネスのオーナーですか？」を押す" width="1200" height="622" loading="lazy"></figure></li>
+        <li><span class="num">2</span><h3>管理しているアカウントを確認する</h3>
+          <p class="d">いま管理しているGoogleアカウントのメールアドレスが、一部だけ表示されます。心当たりがあれば、そのアカウントでログインし直して<a href="#setup-gbp">上の手順</a>に進んでください。</p>
+          <p class="d">心当たりがない場合は、「アクセス権限をリクエスト」を押します。</p>
+          <figure class="shot"><img src="img/setup/gbp-11.webp" alt="ビジネスプロフィールが他のユーザーに管理されている可能性があるという画面" width="1200" height="621" loading="lazy"></figure></li>
+        <li><span class="num">3</span><h3>「オーナー権限」でリクエストを送る</h3>
+          <p class="d">アクセスレベルは必ず<b>「オーナー権限」</b>を選んでください。関係・担当者名・電話番号はお客様の情報を入力し、「送信」を押します。</p>
+          <p class="sub">いまの管理者から反応がなければ、3日ほどでリクエストしたアカウントにアクセス権が付与されます。</p>
+          <figure class="shot"><img src="img/setup/gbp-12.webp" alt="アクセス権限レベルでオーナー権限を選ぶ画面" width="1200" height="621" loading="lazy"></figure></li>
+      </ol>
+    </article>
+  </div>
+</section>
+
+<!-- ============ SETUP: SNS ============ -->
+<section id="view-setup-sns" class="wrap" hidden>
+  <p class="crumb"><a href="#top">利用ガイド</a> ／ <a href="#setup">初期設定</a> ／ Instagram・TikTokを連携する</p>
+  <div class="doc">
+    <nav class="side" aria-label="初期設定">
+      <p>初期設定</p>
+      <a href="#setup">ご利用開始までの流れ</a>
+      <a href="#setup-gbp">Googleのオーナー権限を付与する</a>
+      <a href="#setup-sns" aria-current="page">Instagram・TikTokを連携する</a>
+    </nav>
+    <article class="body">
+      <header>
+        <h1>Instagram・TikTokを連携する</h1>
+        <p class="lead">管理画面の「ロケーション設定」から、InstagramとTikTokを連携します。Instagramのログイン情報をご存じの方であれば、お客様・担当者様どちらが行っても大丈夫です。</p>
+      </header>
+
+      <div class="box">
+        <h3>連携の前に、Instagramで確認してください</h3>
+        <ul class="check">
+          <li><b>Instagramがプロアカウントになっている</b><span>個人アカウントのままでは連携できません。設定から「プロアカウントに切り替える」を選んでください。</span></li>
+          <li><b>InstagramとFacebookページの連携が完了している（任意・おすすめ）</b><span>先にInstagramアプリでFacebookページと連携しておくと、管理画面ではInstagramにログインするだけで、Facebookの連携も自動で完了します。<a href="#setup-sns-facebook">連携の手順を見る</a></span></li>
+        </ul>
+      </div>
+
+      <p class="warn"><b>Facebookと連携していないと、投稿の数値が見られません。</b>いいね・保存・閲覧数などのインサイトは、Facebookとの連携が必要です。あとから連携することもできますが、その場合は管理画面でもう一度ログインし直す必要があります。<a href="#setup-sns-insight">詳しく見る</a></p>
+
+      <ol class="steps">
+        <li><span class="num">1</span><h3>「ロケーション設定」の「連携情報」を開く</h3>
+          <p class="d">管理画面の左メニューから「ロケーション設定」を押すと、連携情報の画面が開きます。</p>
+          <figure class="shot pinned"><div class="shot-inner">
+            <img src="img/sns/linkage-overview.webp" alt="ロケーション設定の連携情報の画面" width="1400" height="763" loading="lazy">
+            <span class="pin" style="left:12.4%;top:17.4%" aria-hidden="true">A</span>
+            <span class="pin" style="left:12.4%;top:45.4%" aria-hidden="true">B</span>
+            <span class="pin" style="left:12.4%;top:73.4%" aria-hidden="true">C</span>
+          </div></figure>
+          <ul class="keys d">
+            <li><span class="key">A</span><span><b>Facebook × Instagram連携</b>　Instagram上でFacebookと連携済みなら、Bのログイン後に自動で「連携済み」になります。</span></li>
+            <li><span class="key">B</span><span><b>Instagram連携</b>　ここからログインします。</span></li>
+            <li><span class="key">C</span><span><b>Google連携</b>　弊社が行います。<b class="em">お客様は押さないでください。</b></span></li>
+          </ul></li>
+        <li><span class="num">2</span><h3>Instagram連携の「ログイン」を押す</h3>
+          <p class="d">Instagramのログイン画面が開くので、連携するアカウントでログインします。</p></li>
+        <li><span class="num">3</span><h3>「連携済み」になったら完了</h3>
+          <p class="d">連携が完了すると、ステータスが「連携済み」になり、アカウント名が表示されます。Facebook × Instagram連携も「連携済み」になっていれば、すべて完了です。</p>
+          <figure class="shot"><img src="img/sns/linkage-done.webp" alt="Facebook × Instagram連携とInstagram連携のステータスが連携済みになった画面" width="1400" height="484" loading="lazy"></figure>
+          <p class="sub">Facebook × Instagram連携が「未連携」のままの場合は、Instagram上でFacebookページとの連携ができていない可能性があります。連携したあと、もう一度ログインしてください。</p></li>
+      </ol>
+
+      <div class="sec-h" id="setup-sns-facebook-anchor">
+        <h2>InstagramとFacebookページを連携する <span class="role tbd" style="vertical-align:middle">任意・おすすめ</span></h2>
+        <p class="lead">Instagramアプリから行います。Facebookと連携しなくても導入はできますが、連携するといいね・保存・閲覧数などの数値が見られるようになります。すでに連携済みの場合は不要です。</p>
+      </div>
+      <ol class="steps">
+        <li><span class="num">1</span><h3>Instagramアプリで、自分のプロフィール画面を開く</h3></li>
+        <li><span class="num">2</span><h3>「プロフィールを編集」をタップする</h3></li>
+        <li><span class="num">3</span><h3>「ページ」をタップする</h3>
+          <p class="d">「ビジネス公開情報」または「プロフィール情報」の中にあります。</p></li>
+        <li><span class="num">4</span><h3>「リンク」または「作成」を選び、Facebookにログインする</h3>
+          <p class="d">すでにFacebookページがある場合は「リンク」、まだない場合は「作成」を選びます。</p></li>
+        <li><span class="num">5</span><h3>連携したいFacebookページを選んで完了</h3></li>
+      </ol>
+      <p class="note"><b>管理画面でInstagram連携をすでに済ませている場合：</b>Facebookと連携したあと、「ロケーション設定」でInstagramにもう一度ログインしてください。Facebook × Instagram連携が「連携済み」になります。</p>
+
+      <div class="sec-h" id="setup-sns-tiktok-anchor">
+        <h2>TikTokを連携する <span class="role tbd" style="vertical-align:middle">任意・おすすめ</span></h2>
+        <p class="lead">連携しておくと、Instagramの動画投稿がTikTokにも自動で投稿されます。より多くの媒体に発信できるので、ぜひ連携してください。</p>
+      </div>
+      <ol class="steps">
+        <li><span class="num">1</span><h3>TikTok連携の「ログイン」を押す</h3>
+          <p class="d">連携情報の画面を下にスクロールし、TikTok連携の「ログイン」から、TikTokアカウントでログインします。ステータスが「連携済み」になれば完了です。</p>
+          <figure class="shot"><img src="img/sns/tiktok-card.webp" alt="TikTok連携のステータスが連携済みになった画面" width="1200" height="200" loading="lazy"></figure></li>
+      </ol>
+
+      <div class="sec-h">
+        <h2>Synup連携</h2>
+        <p class="lead">導入後、自動で連携されます。お客様の操作は必要ありません。「連携済み」と表示されていれば問題ありません。</p>
+      </div>
+      <figure class="shot"><img src="img/sns/synup-card.webp" alt="Synup連携のステータスが連携済みの画面" width="1200" height="181" loading="lazy"></figure>
+
+      <div class="sec-h" id="setup-sns-insight-anchor">
+        <h2>Facebookと連携していないとき</h2>
+        <p class="lead">管理画面の「投稿」の一覧で、赤枠の数値（ハートのマークから右）が表示されません。いいね数・コメント数・保存数・合計・閲覧数・リーチ数は、Facebookとの連携で取得しているためです。</p>
+      </div>
+      <figure class="shot pinned"><div class="shot-inner"><img src="img/sns/postlist-metrics.webp" alt="投稿一覧の画面。いいねから右の数値の列が赤枠で囲まれている" width="1400" height="763" loading="lazy"></div></figure>
+      <p class="note"><b>表示されないときは：</b>Instagram上でFacebookページと連携してから、「ロケーション設定」でInstagramにもう一度ログインしてください。ご不明な点は、担当者様にご確認ください。</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ ADMIN INDEX ============ -->
+<section id="view-admin" class="wrap" hidden>
+  <p class="crumb"><a href="#top">利用ガイド</a> ／ 管理画面</p>
+  <div class="doc">
+    <nav class="side" aria-label="管理画面">
+      <p>管理画面</p>
+      <a href="#admin" aria-current="page">画面の構成</a>
+      <a href="#dashboard">ダッシュボード</a>
+      <a href="#admin-posts">投稿</a>
+      <a href="#admin-reviews">口コミ・投稿</a>
+      <span>基本情報</span><span>メッセージ</span>
+      <span>インフルエンサーDB</span><span>サイテーション</span><span>ロケーション設定</span><span>ユーザー管理</span>
+    </nav>
+    <article class="body">
+      <header>
+        <h1>画面の構成</h1>
+        <p class="lead">管理画面は、上のヘッダーと左のメニューで操作します。左のメニューを押すと、右側に各画面が表示されます。</p>
+      </header>
+
+      <div class="sec-h" style="border-top:0;padding-top:0">
+        <h2>上部のヘッダー</h2>
+      </div>
+      <figure class="shot pinned head-shot" style="margin:0"><div class="shot-inner">
+        <img src="img/admin/header.webp" alt="管理画面上部のヘッダー" width="1230" height="80">
+        <span class="pin" style="left:5.7%;top:50%" aria-hidden="true">A</span>
+        <span class="pin" style="left:15.4%;top:50%" aria-hidden="true">B</span>
+        <span class="pin" style="left:49.3%;top:50%" aria-hidden="true">C</span>
+        <span class="pin" style="left:75.6%;top:50%" aria-hidden="true">D</span>
+      </div></figure>
+      <ul class="keys keys-row">
+        <li><span class="key">A</span><span><b>メニューの開閉</b></span></li>
+        <li><span class="key">B</span><span><b>表示言語</b>（日・英・タイ）</span></li>
+        <li><span class="key">C</span><span><b>承認管理</b>（公開前の確認）</span></li>
+        <li><span class="key">D</span><span><b>会社名</b></span></li>
+      </ul>
+
+      <div class="sec-h">
+        <h2>左のメニュー</h2>
+      </div>
+      <div class="menu-map">
+        <figure class="shot side-shot" style="margin:0"><div class="shot-inner">
+            <img src="img/admin/sidebar.webp" alt="管理画面の左メニュー" width="374" height="1098">
+            <span class="pin" style="left:93%;top:3.5%" aria-hidden="true">1</span>
+            <span class="pin" style="left:93%;top:17.5%" aria-hidden="true">2</span>
+            <span class="pin" style="left:93%;top:24.4%" aria-hidden="true">3</span>
+            <span class="pin" style="left:93%;top:31.4%" aria-hidden="true">4</span>
+            <span class="pin" style="left:93%;top:38.3%" aria-hidden="true">5</span>
+            <span class="pin" style="left:93%;top:45.4%" aria-hidden="true">6</span>
+            <span class="pin" style="left:93%;top:52.4%" aria-hidden="true">7</span>
+            <span class="pin" style="left:93%;top:61.6%" aria-hidden="true">8</span>
+            <span class="pin" style="left:93%;top:68.5%" aria-hidden="true">9</span>
+            <span class="pin" style="left:93%;top:75.4%" aria-hidden="true">10</span>
+            <span class="pin" style="left:93%;top:82.4%" aria-hidden="true">11</span>
+            <span class="pin" style="left:93%;top:89.4%" aria-hidden="true">12</span>
+            <span class="pin" style="left:93%;top:96.4%" aria-hidden="true">13</span>
+        </div></figure>
+        <ol class="menu-desc">
+          <li><span class="num">1</span><div><h3>ダッシュボード</h3><p>Google・Instagram・MEO順位の数値をまとめて確認する画面です。検索された回数、電話の回数、口コミの評価やInstagramのフォロワーなどが見られます。</p><a class="more" href="#dashboard">詳しく見る ›</a></div></li>
+          <li><span class="num">2</span><div><h3>投稿</h3><p>Instagramに投稿した記事の一覧です。いいね・閲覧数などの数値と、Google・TikTokへの連携状況を確認できます。管理画面から新しく投稿したり、AIで投稿文を作ったりもできます。</p><a class="more" href="#admin-posts">詳しく見る ›</a></div></li>
+          <li><span class="num">3</span><div><h3>口コミ・投稿</h3><p>Googleの口コミを確認して返信する画面です。AIでの返信文作成、定型文、自動返信が使えます。口コミを集めるためのページ（QRコード）作成や、Googleだけへの投稿もここから行います。</p><a class="more" href="#admin-reviews">詳しく見る ›</a></div></li>
+          <li><span class="num">4</span><div><h3>基本情報</h3><p>Googleに載せる店舗情報を編集する画面です。営業時間・写真・メニュー・カテゴリ・店舗の説明などを変更できます。</p></div></li>
+          <li><span class="num">5</span><div><h3>メッセージ</h3><p>InstagramのDMとGoogleのチャットを、ひとつの画面で確認・返信できます。</p></div></li>
+          <li><span class="num">6</span><div><h3>インフルエンサーDB</h3><p>地域・フォロワー数・ジャンルなどの条件で、PRを依頼したいInstagramのインフルエンサーを探せます。無料版は月3回まで検索できます。</p></div></li>
+          <li><span class="num">7</span><div><h3>サイテーション</h3><p>お店の情報が掲載・同期されている外部サービス（AI検索・地図アプリ・音声アシスタントなど）の一覧です。確認用の画面で、操作は必要ありません。</p></div></li>
+          <li><span class="num">8</span><div><h3>ロケーション設定</h3><p>Instagram・Facebook・TikTokなどとの連携を行う画面です。連携の状態もここで確認できます。</p><a class="more" href="#setup-sns">連携の手順を見る ›</a></div></li>
+          <li><span class="num">9</span><div><h3>ユーザー管理</h3><p>管理画面にログインできるスタッフを追加し、担当する店舗や使える機能を設定します。</p></div></li>
+          <li><span class="num">10</span><div><h3>お問い合わせ</h3><p>管理画面から、サポートへ問い合わせを送る画面です。</p></div></li>
+          <li><span class="num">11</span><div><h3>申し込みフォーム</h3><p>追加のお申し込み用フォームが、別の画面で開きます。</p></div></li>
+          <li><span class="num">12</span><div><h3>リリースノート</h3><p>機能の追加や変更のお知らせが、別の画面で開きます。横の日付は最新の更新日です。</p></div></li>
+          <li><span class="num">13</span><div><h3>ログアウト</h3><p>管理画面からログアウトします。共用のパソコンでは、作業後に必ずログアウトしてください。</p></div></li>
+        </ol>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ============ POSTS ============ -->
+<section id="view-admin-posts" class="wrap" hidden>
+  <p class="crumb"><a href="#top">利用ガイド</a> ／ <a href="#admin">管理画面</a> ／ 投稿</p>
+  <div class="doc">
+    <nav class="side" aria-label="管理画面">
+      <p>管理画面</p>
+      <a href="#admin">画面の構成</a>
+      <a href="#dashboard">ダッシュボード</a>
+      <a href="#admin-posts" aria-current="page">投稿</a>
+      <a href="#admin-reviews">口コミ・投稿</a>
+      <span>基本情報</span><span>メッセージ</span>
+      <span>インフルエンサーDB</span><span>サイテーション</span><span>ロケーション設定</span><span>ユーザー管理</span>
+    </nav>
+    <article class="body">
+      <header>
+        <h1>投稿 <span class="role tbd" style="vertical-align:middle">Instagram</span></h1>
+        <p class="lead">Instagramに投稿した記事の一覧です。記事ごとの反応（いいね・閲覧数など）と、GoogleやTikTokに自動で連携されたかを確認できます。</p>
+      </header>
+
+      <p class="note"><b>投稿の基本：</b>Instagramで投稿すると、その内容がGoogleビジネスプロフィールの「最新情報」やTikTokにも自動で投稿されます（連携している場合）。管理画面の「新規投稿」から投稿することもできます。</p>
+
+      <div class="sec-h" style="border-top:0;padding-top:0"><h2>一覧の見方</h2></div>
+      <figure class="shot pinned" style="margin:0"><div class="shot-inner">
+        <img src="img/posts/list.webp" alt="投稿の一覧画面" width="1400" height="809">
+            <span class="pin" style="left:1.6%;top:2.5%" aria-hidden="true">1</span>
+            <span class="pin" style="left:8.1%;top:8.3%" aria-hidden="true">2</span>
+            <span class="pin" style="left:14.4%;top:8.3%" aria-hidden="true">3</span>
+            <span class="pin" style="left:1.6%;top:12.2%" aria-hidden="true">4</span>
+            <span class="pin" style="left:97.2%;top:8.8%" aria-hidden="true">5</span>
+            <span class="pin" style="left:29.2%;top:14.7%" aria-hidden="true">6</span>
+            <span class="pin" style="left:40.2%;top:14.7%" aria-hidden="true">7</span>
+            <span class="pin" style="left:77.6%;top:14.7%" aria-hidden="true">8</span>
+            <span class="pin" style="left:89.7%;top:14.7%" aria-hidden="true">9</span>
+      </div></figure>
+      <p class="scroll-hint">画像は横にスクロールできます</p>
+      <ul class="keys">
+        <li><span class="key">1</span><span><b>一覧／新規投稿</b>　投稿の一覧と、管理画面からの新規投稿を切り替えます。</span></li>
+        <li><span class="key">2</span><span><b>定型文</b>　Googleへ連携するときに、投稿の最後に自動で付ける文章やリンク（例：今すぐ電話）を設定します。</span></li>
+        <li><span class="key">3</span><span><b>除外文言</b>　Googleへ連携するときに、自動で消したり置き換えたりする言葉を設定します。</span></li>
+        <li><span class="key">4</span><span><b>表示件数・フィルター・日付選択</b>　表示する件数や期間を絞り込みます。</span></li>
+        <li><span class="key">5</span><span><b>ダウンロード</b>　一覧をCSVファイルで保存します。</span></li>
+        <li><span class="key">6</span><span><b>投稿</b>　Instagramに投稿した文章です。</span></li>
+        <li><span class="key">7</span><span><b>反応の数値</b>　いいね・コメント・保存・閲覧数などです。意味は下の表をご覧ください。</span></li>
+        <li><span class="key">8</span><span><b>Google</b>　Googleに連携された投稿を開くボタンと、Googleの投稿だけを削除するボタンです。連携できなかった場合は「連携エラー」と表示されます。</span></li>
+        <li><span class="key">9</span><span><b>Synup・TikTok</b>　それぞれに連携されたかどうかです（連携済／未連携）。</span></li>
+      </ul>
+
+      <div class="sec-h"><h2>反応の数値の意味</h2>
+        <p class="lead">Facebookと連携していないと表示されません。<a href="#setup-sns-insight">詳しく見る</a></p></div>
+      <div class="tbl"><table>
+        <thead><tr><th>マーク</th><th>項目</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td class="ic">♡</td><td>いいね</td><td>いいねされた数</td></tr>
+          <tr><td class="ic">○</td><td>コメント</td><td>コメントされた数</td></tr>
+          <tr><td class="ic">⌑</td><td>保存</td><td>保存（お気に入り）された数</td></tr>
+          <tr><td class="ic">Σ</td><td>合計（エンゲージメント）</td><td>いいね・コメント・保存などの反応の合計</td></tr>
+          <tr><td class="ic">◉</td><td>閲覧</td><td>投稿が見られた回数。同じ人が何度見ても数えます</td></tr>
+          <tr><td class="ic">((·))</td><td>リーチ</td><td>投稿を見た人の数。同じ人は1人として数えます</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="sec-h"><h2>新規投稿</h2>
+        <p class="lead">管理画面からInstagramに投稿できます。投稿する店舗を選び、写真と文章を入れて投稿します。</p></div>
+      <ul class="feat">
+        <li><b>AIで投稿文を作る</b><span>30文字以上の下書きやキーワードを入れて「AIで自動生成」を押すと、投稿文が作られます。口調（丁寧／カジュアル）、絵文字の有無、口コミを参考にするかを選べます。</span></li>
+        <li><b>画像から文章を作る</b><span>「画像から生成」で写真をアップロードすると、写真をもとにした文章が2パターン作られます。気に入った方を選んで使えます。</span></li>
+        <li><b>翻訳</b><span>作った文章に、英語などの翻訳を付けられます。</span></li>
+      </ul>
+
+      <div class="sec-h"><h2>Googleに連携するときの注意</h2></div>
+      <ul class="feat">
+        <li><b>連携されるのは最初に投稿した内容だけ</b><span>Instagramで投稿したあとに文章を直したりハッシュタグを足したりしても、Googleには反映されません。</span></li>
+        <li><b>Googleの投稿は1,500文字まで</b><span>超えた部分は「…」で省略されます。</span></li>
+        <li><b>住所・電話番号・URLは入れない</b><span>Googleのルールで、投稿に住所・電話番号・URLを入れると表示されなくなることがあります。「除外文言」で自動で消す設定ができます。</span></li>
+        <li><b>同じ写真を何度も使わない</b><span>Googleに同じ写真が重複すると、機能が制限されることがあります。</span></li>
+      </ul>
+
+      <div class="sec-h"><h2>「連携エラー」と表示されたとき</h2>
+        <p class="lead">Googleの列に「連携エラー」と出たら、マウスを合わせると理由が表示されます。よくある理由は次のとおりです。</p></div>
+      <div class="tbl"><table>
+        <thead><tr><th>表示される英文（一部）</th><th>理由と対処</th></tr></thead>
+        <tbody>
+          <tr><td>not authorized for this location</td><td>この店舗の業種カテゴリでは、Googleに投稿できない場合があります。担当者様にご確認ください。</td></tr>
+          <tr><td>Image bytes too small</td><td>写真のサイズが小さすぎます。もう少し大きい写真で投稿してください。</td></tr>
+          <tr><td>Image format is not supported</td><td>写真の形式に対応していません。jpg・png・gifの写真で投稿してください。</td></tr>
+          <tr><td>Requested entity was not found</td><td>Googleの店舗情報が見つかりません。担当者様にご確認ください。</td></tr>
+        </tbody>
+      </table></div>
+      <p class="note"><b>音楽付きのリールについて：</b>著作権のある音楽を使った投稿は、Googleに連携できないことがあります。</p>
+    </article>
+  </div>
+</section>
+
+<!-- ============ REVIEWS ============ -->
+<section id="view-admin-reviews" class="wrap" hidden>
+  <p class="crumb"><a href="#top">利用ガイド</a> ／ <a href="#admin">管理画面</a> ／ 口コミ・投稿</p>
+  <div class="doc">
+    <nav class="side" aria-label="管理画面">
+      <p>管理画面</p>
+      <a href="#admin">画面の構成</a>
+      <a href="#dashboard">ダッシュボード</a>
+      <a href="#admin-posts">投稿</a>
+      <a href="#admin-reviews" aria-current="page">口コミ・投稿</a>
+      <span>基本情報</span><span>メッセージ</span>
+      <span>インフルエンサーDB</span><span>サイテーション</span><span>ロケーション設定</span><span>ユーザー管理</span>
+    </nav>
+    <article class="body">
+      <header>
+        <h1>口コミ・投稿 <span class="role tbd" style="vertical-align:middle">Google</span></h1>
+        <p class="lead">Googleに届いた口コミを確認して返信する画面です。上部の「投稿」タブからは、Googleだけに投稿することもできます。</p>
+      </header>
+
+      <p class="warn"><b>口コミへの返信は48時間以内に。</b>Googleでは、口コミが届いてから48時間以内に返信することが推奨されています。「未返信」をこまめに確認して、早めに返信しましょう。</p>
+
+      <div class="sec-h" style="border-top:0;padding-top:0"><h2>口コミ一覧の見方</h2></div>
+      <figure class="shot pinned" style="margin:0"><div class="shot-inner">
+        <img src="img/reviews/list.webp" alt="口コミの一覧画面" width="1400" height="817">
+            <span class="pin" style="left:1.6%;top:2.5%" aria-hidden="true">1</span>
+            <span class="pin" style="left:1.6%;top:8.2%" aria-hidden="true">2</span>
+            <span class="pin" style="left:29.8%;top:8.2%" aria-hidden="true">3</span>
+            <span class="pin" style="left:42.1%;top:8.2%" aria-hidden="true">4</span>
+            <span class="pin" style="left:1.6%;top:12.9%" aria-hidden="true">5</span>
+            <span class="pin" style="left:80.3%;top:12.8%" aria-hidden="true">6</span>
+            <span class="pin" style="left:96.6%;top:10.1%" aria-hidden="true">7</span>
+            <span class="pin" style="left:82.2%;top:17.4%" aria-hidden="true">8</span>
+            <span class="pin" style="left:93.5%;top:17.4%" aria-hidden="true">9</span>
+      </div></figure>
+      <p class="scroll-hint">画像は横にスクロールできます</p>
+      <ul class="keys">
+        <li><span class="key">1</span><span><b>口コミ／投稿</b>　口コミの一覧と、Googleだけへの投稿を切り替えます。</span></li>
+        <li><span class="key">2</span><span><b>一覧・未返信・返信不要・差し戻し</b>　口コミを対応状況ごとに分けて表示します。まだ返信していない口コミは「未返信」で確認できます。</span></li>
+        <li><span class="key">3</span><span><b>定型文・自動返信設定</b>　返信用の定型文や、自動返信のルールを設定します。</span></li>
+        <li><span class="key">4</span><span><b>口コミ収集</b>　お客様に口コミを書いてもらうための専用ページ（QRコード）を作ります。<a href="#admin-reviews-collect">詳しく見る</a></span></li>
+        <li><span class="key">5</span><span><b>表示件数・フィルター・日付選択</b>　表示する件数や期間、評価などで絞り込みます。</span></li>
+        <li><span class="key">6</span><span><b>検索</b>　口コミを書いた人の名前や、口コミの内容で探します。</span></li>
+        <li><span class="key">7</span><span><b>ダウンロード</b>　口コミの一覧をCSVファイルで保存します。</span></li>
+        <li><span class="key">8</span><span><b>ステータス</b>　返信の状況です。ボタンを押すと返信画面が開きます。</span></li>
+        <li><span class="key">9</span><span><b>提供元</b>　口コミが届いたサービスです。</span></li>
+      </ul>
+
+      <div class="sec-h"><h2>ステータスの意味</h2></div>
+      <div class="tbl"><table>
+        <thead><tr><th>ステータス</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td><span class="st-b warn-b">未返信</span></td><td>まだ返信していない口コミです。押すと返信できます。</td></tr>
+          <tr><td><span class="st-b">返信済み</span></td><td>返信が完了しています。押すと返信を直せます。</td></tr>
+          <tr><td>自動返信</td><td>自動返信の設定で返信した口コミです。</td></tr>
+          <tr><td>返信不要</td><td>返信しないことにした口コミです。「返信不要解除」で未返信に戻せます。</td></tr>
+          <tr><td>承認申請中・差し戻し</td><td>承認の設定をしている場合の状態です。承認待ち、または承認者から差し戻された返信です。</td></tr>
+          <tr><td>削除済み</td><td>口コミが削除されています。返信はできません。</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="sec-h"><h2>口コミに返信する</h2>
+        <p class="lead">一覧の「未返信」ボタンを押すと、返信画面が開きます。自分で書くことも、AIや定型文で作ることもできます。</p></div>
+      <div class="split">
+        <figure class="shot" style="margin:0"><div class="shot-inner">
+          <img src="img/reviews/reply.webp" alt="口コミの返信画面" width="800" height="1432" loading="lazy">
+            <span class="pin" style="left:5.6%;top:29%" aria-hidden="true">1</span>
+            <span class="pin" style="left:5.6%;top:50.6%" aria-hidden="true">2</span>
+            <span class="pin" style="left:5.6%;top:55.6%" aria-hidden="true">3</span>
+            <span class="pin" style="left:5.6%;top:63.5%" aria-hidden="true">4</span>
+            <span class="pin" style="left:5.6%;top:71.3%" aria-hidden="true">5</span>
+            <span class="pin" style="left:27.8%;top:80%" aria-hidden="true">6</span>
+            <span class="pin" style="left:5.6%;top:90.6%" aria-hidden="true">7</span>
+            <span class="pin" style="left:74.7%;top:26.5%" aria-hidden="true">8</span>
+        </div></figure>
+        <div class="split-text">
+          <ul class="keys">
+        <li><span class="key">1</span><span><b>口コミの内容</b>　お客様が書いた口コミです。</span></li>
+        <li><span class="key">8</span><span><b>翻訳</b>　口コミを日本語・英語など、読みやすい言葉に翻訳します。</span></li>
+        <li><span class="key">2</span><span><b>定型文から選択</b>　登録した定型文を返信内容に入れます。</span></li>
+        <li><span class="key">3</span><span><b>AIの口調</b>　AIで作る返信の口調を「丁寧」「カジュアル」から選びます。</span></li>
+        <li><span class="key">4</span><span><b>AIの返信対象</b>　来店・来社・打ち合わせなど、お客様に合わせて選ぶと、より自然な返信になります。</span></li>
+        <li><span class="key">5</span><span><b>キーワードを選択</b>　返信に入れたい言葉を3つまで選べます。「返信キーワード設定」で登録しておきます。</span></li>
+        <li><span class="key">6</span><span><b>AIで返信文を生成</b>　押すと、AIが返信文を作ります。星だけの口コミにも使えます。</span></li>
+        <li><span class="key">7</span><span><b>返信内容</b>　返信文を確認・修正して「更新」を押すと、Googleに返信されます。</span></li>
+      </ul>
+          <p class="note"><b>AIの返信文は必ず確認を。</b>お店の状況に合っているかを見てから返信してください。</p>
+        </div>
+      </div>
+
+      <div class="sec-h"><h2>定型文・自動返信の設定</h2>
+        <p class="lead">48時間以内に返信するのが難しいときのための設定です。自動返信の文章をあらかじめ登録しておくと、決めた時間内に返信できなかった口コミに、自動で返信されます。</p></div>
+      <p class="note"><b>できるだけ、ひとつずつ返信してください。</b>自動返信はどの口コミにも同じ定型文が入るため、お客様に機械的な印象を与えてしまいます。普段は手動かAIで返信し、自動返信は「どうしても返信できなかったとき」の備えとして使ってください。</p>
+      <p class="lead">「定型文・自動返信設定」を開くと、3つの設定があります。</p>
+      <figure class="shot pinned" style="margin:0"><div class="shot-inner">
+        <img src="img/reviews/fixed.webp" alt="返信定型文設定の画面" width="1400" height="422" loading="lazy">
+            <span class="pin" style="left:1.6%;top:28.6%" aria-hidden="true">1</span>
+            <span class="pin" style="left:2.0%;top:37.9%" aria-hidden="true">2</span>
+            <span class="pin" style="left:10.0%;top:37.9%" aria-hidden="true">3</span>
+            <span class="pin" style="left:17.4%;top:37.9%" aria-hidden="true">4</span>
+            <span class="pin" style="left:91.3%;top:57.2%" aria-hidden="true">5</span>
+            <span class="pin" style="left:49.7%;top:91.4%" aria-hidden="true">6</span>
+      </div></figure>
+      <ul class="keys">
+        <li><span class="key">1</span><span><b>ロケーション</b>　設定する店舗を選びます。</span></li>
+        <li><span class="key">2</span><span><b>返信定型文設定</b>　よく使う返信文を登録します。星1〜5それぞれの定型文を作っておくと便利です。例文から選んで作ることもできます。</span></li>
+        <li><span class="key">3</span><span><b>自動返信設定</b>　条件に合った口コミに、定型文で自動返信します（下の画面）。</span></li>
+        <li><span class="key">4</span><span><b>返信キーワード設定</b>　AIで返信文を作るときに入れたい言葉を登録します。</span></li>
+        <li><span class="key">5</span><span><b>編集・削除</b>　登録した内容を直したり、消したりします。</span></li>
+        <li><span class="key">6</span><span><b>追加</b>　新しい定型文を追加します。</span></li>
+      </ul>
+      <figure class="shot" style="margin:0"><img src="img/reviews/auto.webp" alt="自動返信設定の画面" width="1400" height="529" loading="lazy"></figure>
+      <div class="tbl"><table>
+        <thead><tr><th>自動返信の項目</th><th>設定する内容</th></tr></thead>
+        <tbody>
+          <tr><td>コメント</td><td>星だけの口コミ、星とコメントがある口コミ、すべて、のどれに返信するか</td></tr>
+          <tr><td>評価</td><td>星いくつからいくつまでの口コミに返信するか</td></tr>
+          <tr><td>宛名</td><td>返信に、口コミを書いた人の名前を入れるかどうか</td></tr>
+          <tr><td>自動返信時間</td><td>口コミが届いてから何時間、手動で返信がなければ自動返信するか</td></tr>
+          <tr><td>自動返信内容</td><td>どの定型文で返信するか</td></tr>
+        </tbody>
+      </table></div>
+
+      <div class="sec-h" id="admin-reviews-collect-anchor"><h2>口コミ収集</h2>
+        <p class="lead">お客様に口コミを書いてもらうための専用ページ（クッションページ）を作ります。QRコードを店内に置いたり、URLをLINEやSMSで送ったりして使います。</p></div>
+
+      <ol class="three">
+        <li><span class="num">1</span><b>星の数やキーワードを設定</b><span>管理画面で、あらかじめ設定しておきます。</span></li>
+        <li><span class="num">2</span><b>お客様がQRコード・URLを読み取る</b><span>口コミ用のページが開きます。</span></li>
+        <li><span class="num">3</span><b>AIが口コミの文面を考える</b><span>お客様は星と評価ポイントを選ぶだけです。</span></li>
+      </ol>
+
+      <div class="collect">
+        <div class="col">
+          <p class="col-h">管理画面（設定）</p>
+          <figure class="shot" style="margin:0"><div class="shot-inner">
+            <img src="img/reviews/collect-settings.webp" alt="口コミ収集の設定画面" width="900" height="1828" loading="lazy">
+          <span class="pin" style="left:2.1%;top:1.6%" aria-hidden="true">1</span>
+          <span class="pin" style="left:2.1%;top:30.8%" aria-hidden="true">2</span>
+          <span class="pin" style="left:2.1%;top:48.1%" aria-hidden="true">3</span>
+          <span class="pin" style="left:2.1%;top:63.9%" aria-hidden="true">4</span>
+          <span class="pin" style="left:2.1%;top:77.0%" aria-hidden="true">5</span>
+          <span class="pin" style="left:2.1%;top:95.2%" aria-hidden="true">6</span>
+          </div></figure>
+          <ul class="keys">
+            <li><span class="key">1</span><span><b>ロゴ・店舗名・説明</b>　お客様の画面に表示されます。説明には、ご来店のお礼と口コミのお願いを書きます。</span></li>
+            <li><span class="key">2</span><span><b>Googleへ送信する星の数</b>　ここで選んだ星の数以上を選んだお客様だけを、Googleの口コミ画面へ案内します。</span></li>
+            <li><span class="key">3</span><span><b>キーワード</b>　お客様が選べる「評価ポイント」です。AIはこの言葉をもとに文面を作ります。</span></li>
+            <li><span class="key">4</span><span><b>強制キーワード</b>　AIが作る文面に必ず入れる言葉です（例：業種、地域名）。</span></li>
+            <li><span class="key">5</span><span><b>遷移先URL</b>　Googleの口コミ投稿画面のURLです。「GOOGLEの口コミ投稿URL登録」を押すと自動で入ります。</span></li>
+            <li><span class="key">6</span><span><b>そのほかの設定</b>　業種カテゴリを文面に含めるか、英語・中国語・韓国語などの翻訳を自動で付けるかを選べます。</span></li>
+          </ul>
+        </div>
+        <div class="col">
+          <p class="col-h">お客様が見る画面（プレビュー）</p>
+          <figure class="shot" style="margin:0"><div class="shot-inner">
+            <img src="img/reviews/collect-preview.webp" alt="お客様が見る口コミ用ページのプレビュー" width="600" height="1602" loading="lazy">
+          <span class="pin" style="left:4%;top:3.2%" aria-hidden="true">A</span>
+          <span class="pin" style="left:10.5%;top:43.3%" aria-hidden="true">B</span>
+          <span class="pin" style="left:10.5%;top:51.8%" aria-hidden="true">C</span>
+          <span class="pin" style="left:17.7%;top:78.5%" aria-hidden="true">D</span>
+          </div></figure>
+          <ul class="keys">
+            <li><span class="key">A</span><span><b>QRコード・URL</b>　左のマークでQRコードを表示・保存できます。右のマークでURLをコピーできます。店内掲示やLINE・SMSで使います。</span></li>
+            <li><span class="key">B</span><span><b>星を選ぶ</b>　お客様が満足度を選びます。</span></li>
+            <li><span class="key">C</span><span><b>評価ポイントを選ぶ</b>　3で設定したキーワードが並びます。</span></li>
+            <li><span class="key">D</span><span><b>AIで自動作成</b>　選んだ内容をもとにAIが文面を作ります。「レビューをコピー」→「登録」で、Googleの口コミ画面が開きます。</span></li>
+          </ul>
+          <p class="sub">Googleの画面では、お客様が<b>もう一度星を選び、コピーした文面を貼り付けて</b>投稿します。</p>
+        </div>
+      </div>
+
+      <div class="filter">
+        <h3>低い評価がGoogleに投稿されにくくなります</h3>
+        <p>「Googleへ送信する星の数」で、Googleの口コミ画面へ案内する星の数を決められます。</p>
+        <div class="filter-ex">
+          <div class="fx ok"><b>★4・★5を選んだ人</b><span>Googleの口コミ画面へ案内</span></div>
+          <div class="fx ng"><b>★1〜★3を選んだ人</b><span>Googleには案内しない</span></div>
+        </div>
+        <p class="sub">例：星の数を「★4」に設定した場合</p>
+        <p class="warn"><b>専用ページを通さず、直接Googleに書き込んだ口コミは防げません。</b>この機能で絞り込めるのは、QRコード・URLから専用ページを開いたお客様だけです。</p>
+      </div>
+
+      <p class="sub">口コミ用のページは、お客様のスマートフォンの言語に合わせて自動で表示が切り替わります。</p>
+
+    </article>
+  </div>
+</section>
+
+<!-- ============ DASHBOARD ============ -->
+<section id="view-dashboard" class="wrap" hidden>
+  <p class="crumb"><a href="#top">利用ガイド</a> ／ <a href="#admin">管理画面</a> ／ ダッシュボード</p>
+  <div class="doc">
+    <nav class="side" aria-label="管理画面">
+      <p>管理画面</p>
+      <a href="#admin">画面の構成</a>
+      <a href="#dashboard" aria-current="page">ダッシュボード</a>
+      <a href="#admin-posts">投稿</a>
+      <a href="#admin-reviews">口コミ・投稿</a>
+      <span>基本情報</span><span>メッセージ</span>
+      <span>インフルエンサーDB</span><span>サイテーション</span><span>ロケーション設定</span><span>ユーザー管理</span>
+    </nav>
+
+    <article class="body">
+      <header>
+        <h1>ダッシュボード</h1>
+        <p class="lead">ダッシュボードでは、次の2つの数字を確認できます。</p>
+      </header>
+      <div class="jump">
+        <a href="#dashboard-gbp"><b>Googleビジネスプロフィール</b><span>お店がGoogleでどれだけ見られ、行動につながったか</span></a>
+        <a href="#dashboard-ads" class="ad"><b>AI広告 <span class="badge">オプション</span></b><span>広告を見た人のその後の行動と、来店まで</span></a>
+      </div>
+
+      <div class="sec-h" id="dashboard-gbp-anchor">
+        <h2>Googleビジネスプロフィール</h2>
+        <p class="lead">番号を押すと、下の説明に移動します。</p>
+      </div>
+      <figure class="shot pinned" id="dash-shot" style="margin:0"><div class="shot-inner">
+        <img src="img/dashboard-google.webp" alt="ダッシュボード（Googleビジネスプロフィール）の画面" width="1600" height="1028">
+        <button class="pin" data-k="1" style="left:46%;top:2.6%" aria-label="1の説明へ">1</button>
+        <button class="pin" data-k="2" style="left:72%;top:8%" aria-label="2の説明へ">2</button>
+        <button class="pin" data-k="3" style="left:11.8%;top:17.3%" aria-label="3の説明へ">3</button>
+        <button class="pin" data-k="4" style="left:55.7%;top:17.3%" aria-label="4の説明へ">4</button>
+        <button class="pin" data-k="5" style="left:11.8%;top:47.8%" aria-label="5の説明へ">5</button>
+        <button class="pin" data-k="6" style="left:29.4%;top:47.8%" aria-label="6の説明へ">6</button>
+        <button class="pin" data-k="7" style="left:47%;top:47.8%" aria-label="7の説明へ">7</button>
+        <button class="pin" data-k="8" style="left:64.6%;top:47.8%" aria-label="8の説明へ">8</button>
+        <button class="pin" data-k="9" style="left:82.2%;top:47.8%" aria-label="9の説明へ">9</button>
+      </div></figure>
+      <p class="scroll-hint">画像は横にスクロールできます</p>
+
+      <ol class="items compact">
+        <li id="d1"><span class="num">1</span><h3>媒体の切り替え</h3><p class="what">Google・Instagram・MEO順位計測を切り替えます。</p></li>
+        <li id="d2"><span class="num">2</span><h3>店舗・期間</h3><p class="what">表示する店舗と期間を選びます。</p></li>
+        <li id="d3"><span class="num">3</span><h3>平均評価</h3><p class="what">Googleの口コミの平均点です。</p></li>
+        <li id="d4"><span class="num">4</span><h3>口コミ数・返信率</h3><p class="what">届いた口コミの件数と、返信した割合です。</p></li>
+        <li id="d5"><span class="num">5</span><h3>Google検索数</h3><p class="what">Google検索でお店が表示された回数です。</p></li>
+        <li id="d6"><span class="num">6</span><h3>Googleマップ閲覧数</h3><p class="what">Googleマップでお店が表示された回数です。</p></li>
+        <li id="d7"><span class="num">7</span><h3>URLクリック数</h3><p class="what">ホームページなどへ移動した回数です。</p></li>
+        <li id="d8"><span class="num">8</span><h3>経路検索数</h3><p class="what">お店までのルートが調べられた回数です。</p></li>
+        <li id="d9"><span class="num">9</span><h3>電話数</h3><p class="what">電話ボタンが押された回数です。</p></li>
+      </ol>
+      <p class="sub">数字の下の「▲35 過去30」は、前の同じ期間との差です。Googleの数字は反映まで1週間ほどかかります。</p>
+
+      <h3 class="tbl-h" style="margin-bottom:0">画面の下のほうにある項目</h3>
+      <figure class="shot pinned" style="margin:0"><div class="shot-inner">
+        <img src="img/dash/more.webp" alt="ダッシュボード下部のグラフ・写真・検索語句・レポートの画面" width="1400" height="920" loading="lazy">
+          <span class="pin" style="left:1.6%;top:2.6%" aria-hidden="true">A</span>
+          <span class="pin" style="left:1.6%;top:49.0%" aria-hidden="true">B</span>
+          <span class="pin" style="left:51.2%;top:49.0%" aria-hidden="true">C</span>
+          <span class="pin" style="left:1.6%;top:70.4%" aria-hidden="true">D</span>
+      </div></figure>
+      <p class="scroll-hint">画像は横にスクロールできます</p>
+      <ul class="keys">
+        <li><span class="key">A</span><span><b>グラフ</b>　上の数字（検索数・閲覧数など）を押すと、その数字の毎日の動きがグラフで表示されます。</span></li>
+        <li><span class="key">B</span><span><b>写真</b>　期間内に追加した写真の枚数と、Googleに載っている写真の総数です。</span></li>
+        <li><span class="key">C</span><span><b>検索語句</b>　お店がどんな言葉で検索されて表示されたか、月ごとのランキングです。お客様がどんな目的でお店を探しているかが分かります。</span></li>
+        <li><span class="key">D</span><span><b>Googleレポートダウンロード</b>　毎月の数値をまとめたレポートを、月ごとにダウンロードできます。</span></li>
+      </ul>
+
+      <section class="ad-block" id="dashboard-ads-anchor">
+        <div class="ad-head">
+          <h2>AI広告</h2><span class="badge">オプション</span>
+        </div>
+        <p class="lead">AI広告をご契約のお店に表示されます。</p>
+      <div class="compare">
+        <div class="cmp"><p class="cmp-h">一般的な広告</p><p class="cmp-b">表示回数・クリック数まで</p></div>
+        <div class="cmp ours"><p class="cmp-h">CocoSystemのAI広告</p><p class="cmp-b">クリック後の行動（ルート検索・電話・メニュー閲覧など）と<b>来店</b>まで</p></div>
+      </div>
+
+      <figure class="shot pinned" style="margin:0"><div class="shot-inner">
+        <img src="img/dash/ads.webp" alt="ダッシュボードのAI広告の画面" width="1400" height="449" loading="lazy">
+          <span class="pin" style="left:1.6%;top:3.3%" aria-hidden="true">A</span>
+          <span class="pin" style="left:26.6%;top:3.3%" aria-hidden="true">B</span>
+          <span class="pin" style="left:52.1%;top:3.3%" aria-hidden="true">C</span>
+          <span class="pin" style="left:77.4%;top:3.3%" aria-hidden="true">D</span>
+          <span class="pin" style="left:57.6%;top:46.9%" aria-hidden="true">E</span>
+          <span class="pin" style="left:1.6%;top:54.6%" aria-hidden="true">F</span>
+      </div></figure>
+      <p class="scroll-hint">画像は横にスクロールできます</p>
+      <ul class="keys">
+        <li><span class="key">A</span><span><b>広告表示回数</b>　広告が表示された回数です。多いほど、お店を知ってもらうきっかけが増えます。</span></li>
+        <li><span class="key">B</span><span><b>クリック数</b>　広告が押された回数です。お店に興味を持った人の数の目安です。</span></li>
+        <li><span class="key">C</span><span><b>ローカルアクション</b>　広告を見たあと、Googleマップでお店に対して行われた行動の合計です。下の内訳（F）をすべて足した数になります（集計のタイミングにより、ずれることがあります）。</span></li>
+        <li><span class="key">D</span><span><b>通話</b>　広告から電話で問い合わせがあった回数です。</span></li>
+        <li><span class="key">E</span><span><b>内訳を開く</b>　「▼」を押すと、ローカルアクションの内訳が表示されます。「？」を押すと各項目の説明が出ます。</span></li>
+        <li><span class="key">F</span><span><b>ローカルアクションの内訳</b>　来店・サイト閲覧・ルート検索など、行動ごとの回数です。横にスクロールすると「その他のアクション」も見られます。</span></li>
+      </ul>
+
+      <p class="note"><b>ローカルアクションがクリック数より多いのはなぜ？</b>1人が広告をクリックしたあと、ルート検索・メニュー閲覧・ウェブサイトへのアクセスなど複数の行動をすると、それぞれ1回ずつ数えるためです。</p>
+
+      <h3 class="tbl-h">ローカルアクションの内訳</h3>
+      <div class="tbl"><table>
+        <thead><tr><th>項目</th><th>意味</th></tr></thead>
+        <tbody>
+          <tr><td>実店舗への来店</td><td>広告を押した、または見たあとに、お店に来たと推定される人数です。Googleのデータをもとにした、<b>最低限これだけは来店した</b>という組数です。</td></tr>
+          <tr><td>ルートの表示</td><td>広告からGoogleマップで、お店までのルートが調べられた回数です。</td></tr>
+          <tr><td>通話クリック数</td><td>広告の電話ボタンが押された回数です。</td></tr>
+          <tr><td>メニュー</td><td>広告から、Googleに載せているメニューを見た人の数です。</td></tr>
+          <tr><td>注文</td><td>広告から、Googleに連携している注文・予約が行われた回数です。</td></tr>
+          <tr><td>ウェブサイトへのアクセス</td><td>広告から、お店のホームページを見に来た人の数です。</td></tr>
+          <tr><td>その他のアクション</td><td>お店の情報の保存や共有など、上記以外の行動の回数です。</td></tr>
+        </tbody>
+      </table></div>
+      <p class="sub">「通話」の数には、ホームページなど広告以外から入った電話は含まれません。</p>
+
+      </section>
+    </article>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <img src="img/logo.png" alt="CocoSystem">
+    <nav aria-label="フッター">
+      <a href="#setup">初期設定</a><a href="#admin">管理画面</a><a href="#top">よくある質問</a>
+    </nav>
+    <small>© CocoSystem</small>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var views={top:'top',setup:'setup','setup-gbp':'setup','setup-sns':'setup',admin:'admin',dashboard:'admin','admin-posts':'admin','admin-reviews':'admin'};
+  var anchors={'admin-reviews-collect':['admin-reviews','admin-reviews-collect-anchor'],'dashboard-gbp':['dashboard','dashboard-gbp-anchor'],'dashboard-ads':['dashboard','dashboard-ads-anchor'],'setup-sns-facebook':['setup-sns','setup-sns-facebook-anchor'],'setup-sns-tiktok':['setup-sns','setup-sns-tiktok-anchor'],'setup-sns-insight':['setup-sns','setup-sns-insight-anchor'],'setup-gbp-unknown':['setup-gbp','setup-gbp-unknown-anchor']};
+  function show(){
+    var h=(location.hash||'#top').slice(1),target=null;
+    if(anchors[h]){target=anchors[h][1];h=anchors[h][0];}
+    var v=views[h]?h:'top';
+    Object.keys(views).forEach(function(n){document.getElementById('view-'+n).hidden=(n!==v)});
+    document.querySelectorAll('.gnav a').forEach(function(a){
+      if(a.dataset.nav===views[v])a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
+    });
+    var el=target&&document.getElementById(target);
+    if(el){el.scrollIntoView({block:'start'});window.scrollBy(0,-90);}else window.scrollTo(0,0);
+  }
+  window.addEventListener('hashchange',show);show();
+
+  document.querySelectorAll('.copy').forEach(function(cb){
+    cb.addEventListener('click',function(){
+      var el=document.getElementById(cb.dataset.target),text=el.textContent;
+      function ok(){cb.textContent='コピーしました';setTimeout(function(){cb.textContent='コピー'},1800)}
+      function fallback(){var r=document.createRange();r.selectNodeContents(el);var sel=getSelection();sel.removeAllRanges();sel.addRange(r);cb.textContent='選択しました'}
+      try{navigator.clipboard.writeText(text).then(ok,fallback)}catch(e){fallback()}
+    });
+  });
+
+  function mark(k,on){
+    var li=document.getElementById('d'+k),pin=document.querySelector('.pin[data-k="'+k+'"]');
+    if(li)li.classList.toggle('on',on);if(pin)pin.classList.toggle('on',on);
+  }
+  document.querySelectorAll('#dash-shot .pin').forEach(function(p){
+    p.addEventListener('click',function(){
+      var k=p.dataset.k,li=document.getElementById('d'+k);
+      li.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'center'});
+      mark(k,true);setTimeout(function(){mark(k,false)},1600);
+    });
+    p.addEventListener('mouseenter',function(){mark(p.dataset.k,true)});
+    p.addEventListener('mouseleave',function(){mark(p.dataset.k,false)});
+  });
+  document.querySelectorAll('#view-dashboard .items li').forEach(function(li){
+    var k=li.id.slice(1);
+    li.addEventListener('mouseenter',function(){mark(k,true)});
+    li.addEventListener('mouseleave',function(){mark(k,false)});
+  });
+})();
+</script>
+
+</body></html>
